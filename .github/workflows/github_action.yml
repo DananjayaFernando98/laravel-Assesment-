@@ -1,0 +1,31 @@
+name: Deploy to EC2
+
+on:
+  push:
+    branches:
+      - main
+
+env:
+  HOST: <EC2_INSTANCE_IP>  # Replace with your EC2 instance IP
+  USER: <EC2_INSTANCE_USERNAME>  # Replace with your EC2 instance username
+  SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up SSH keys
+        uses: webfactory/ssh-agent@v0.5.2
+        with:
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+
+      - name: Install rsync
+        run: sudo apt update && sudo apt install -y rsync
+
+      - name: Deploy to EC2
+        run: rsync -rav --delete --exclude='.env' --exclude='vendor/' --exclude='node_modules/' --exclude='storage/' --exclude='public/storage' --exclude='.git/' $GITHUB_WORKSPACE/ $USER@$HOST:/var/www/html/
+
