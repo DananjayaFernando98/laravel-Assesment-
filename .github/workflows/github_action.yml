@@ -8,7 +8,7 @@ on:
 env:
   HOST: <EC2_INSTANCE_IP>  # Replace with your EC2 instance IP
   USER: <EC2_INSTANCE_USERNAME>  # Replace with your EC2 instance username
-  SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+  SSH_PRIVATE_KEY: ${{ secrets.PROD_ENV_FILE }}
 
 jobs:
   deploy:
@@ -21,7 +21,7 @@ jobs:
       - name: Set up SSH keys
         uses: webfactory/ssh-agent@v0.5.2
         with:
-          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+          ssh-private-key: ${{ secrets.PROD_ENV_FILE }}
 
       - name: Install rsync
         run: sudo apt update && sudo apt install -y rsync
